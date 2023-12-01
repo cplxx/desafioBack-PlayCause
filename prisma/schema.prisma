@@ -11,21 +11,21 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
-  password String
-  messange Messange[]
-  createdAt DateTime @default(now())
+  id        Int       @default(autoincrement()) @id
+  email     String    @unique
+  name      String?
+  password  String
+  messanges Message[] 
+  createdAt DateTime  @default(now())
   updatedAt DateTime?
   @@map("users")
 }
 
-model Messange {
-  id    Int     @default(autoincrement()) @id
-  content String
-  user_id Int @unique
-  user User @relation(fields: [user_id], references: [id])
-  createdAt DateTime @default(now())
-  @@map("messanges")
+model Message {
+  id        Int       @default(autoincrement()) @id
+  content   String
+  user_id   Int?      
+  user      User?     @relation(fields: [user_id], references: [id])
+  createdAt DateTime  @default(now())
+  @@map("messanges")  
 }

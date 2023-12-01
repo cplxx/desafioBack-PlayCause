@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { CreateModule } from 'src/frameworks/prisma/repositories/create';
 import { AuthController } from './controllers';
-import { RegisterService } from './services';
+import { AuthService } from './services';
 
 // auth.module.ts
 @Module({
   imports: [CreateModule.forRoot()],
-  providers: [RegisterService],
+  providers: [AuthService],
   controllers: [AuthController],
-  exports: [RegisterService],
+  exports: [AuthService],
 })
 export class AuthModule {}
