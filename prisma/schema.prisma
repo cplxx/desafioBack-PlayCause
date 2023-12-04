@@ -15,17 +15,27 @@ model User {
   email     String    @unique
   name      String?
   password  String
-  messanges Message[] 
+  messages  Message[]
+  userMessages UserMessage[]
   createdAt DateTime  @default(now())
   updatedAt DateTime?
   @@map("users")
 }
 
+model UserMessage {
+  id        Int       @default(autoincrement()) @id
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  message   Message @relation(fields: [messageId], references: [id])
+  messageId Int
+}
+
 model Message {
   id        Int       @default(autoincrement()) @id
   content   String
-  user_id   Int?      
-  user      User?     @relation(fields: [user_id], references: [id])
+  userId    Int?
+  user      User?     @relation(fields: [userId], references: [id])
+  userMessages UserMessage[]
   createdAt DateTime  @default(now())
-  @@map("messanges")  
+  @@map("messages")
 }

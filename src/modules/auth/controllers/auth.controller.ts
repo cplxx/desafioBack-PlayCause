@@ -1,5 +1,5 @@
 // auth.controller.ts
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { AuthService } from '../services';
 import { RegisterUsersDto } from '../dto/register-user.dto';
 import { LoginDto } from '../dto/login-user.dto';
@@ -15,11 +15,16 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registerDto: RegisterUsersDto): Promise<any> {
-    return await this.authService.register(registerDto);
+    return await this.authService.create(registerDto);
   }
 
   @Get('users')
   async findAll() {
     return this.authService.findAll();
+  }
+
+  @Get('user/:id')
+  async findOne(@Param('id') id: number) {
+    return this.authService.findOne(id);
   }
 }
