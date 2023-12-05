@@ -21,10 +21,12 @@ export class UserMessageService {
         secret: process.env.JWT_SECRET,
       },
     );
+
     const userExist = await this.authService.findOne(payload.sub);
     const messageExist = await this.chatService.findOne(
       createUserMessageDto.messageId,
     );
+
     const userAlreadySaveMessage =
       await this.userMessageRepository.findByUserIdAndMessageId(
         createUserMessageDto.messageId,
@@ -34,6 +36,7 @@ export class UserMessageService {
     if (userAlreadySaveMessage) {
       throw new HttpException('User saved this message', 409);
     }
+
     return this.userMessageRepository.create({
       messageId: messageExist.id,
       userId: userExist.id,

@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsInt, IsString } from 'class-validator';
+import { IsNotEmpty, IsInt, IsJWT } from 'class-validator';
 
 export class CreateUserMessageDto {
-  @IsString()
+  @IsJWT()
   @IsNotEmpty()
   token: string;
 
