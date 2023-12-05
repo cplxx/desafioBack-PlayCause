@@ -10,8 +10,8 @@
 
 ## Tecnologias Principais
 
-NodeJS: Ambiente de execução para JavaScript no lado do servidor.
-NestJS: Framework para construção de aplicativos server-side em NodeJS.
+NodeJS: Ambiente de execução para JavaScript no lado do servidor. <br>
+NestJS: Framework para construção de aplicativos server-side em NodeJS. <br>
 Prisma ORM: ORM (Object-Relational Mapping) para interação eficiente com o banco de dados PostgreSQL.
 
 
