@@ -24,7 +24,7 @@ export interface Messages {
   };
 }
 
-@WebSocketGateway(8001, { cors: '*' })
+@WebSocketGateway({ cors: '*' })
 export class ChatGateway {
   constructor(
     private readonly chatService: ChatService,
