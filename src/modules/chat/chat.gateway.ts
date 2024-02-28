@@ -9,7 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
 import { Server } from 'socket.io';
 import { PrismaService } from 'src/db/prisma/prisma.service';
-import { ChatService } from './chat.service';
 
 export interface Messages {
   id?: number;
@@ -28,7 +27,6 @@ export interface Messages {
 @WebSocketGateway({ cors: '*' })
 export class ChatGateway {
   constructor(
-    private readonly chatService: ChatService,
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
   ) {}
@@ -52,67 +50,75 @@ export class ChatGateway {
       },
     });
 
+    /**
+     * INICIO CHAT GPT
+     */
+    const apiKey = process.env.IA_API_KEY; // Substitua pelo sua chave de API real
 
-/**
- * INICIO CHAT GPT
- */
-const apiKey = process.env.IA_API_KEY; // Substitua pelo sua chave de API real
+    const prompt = process.env.IA_PROMPTY;
+    const model = process.env.IA_MODEL; // Ou outro modelo de sua escolha
 
-const prompt = process.env.IA_PROMPTY;
-const model = process.env.IA_MODEL; // Ou outro modelo de sua escolha
+    // const response = await axios.post('https://api.openai.com/v1/completions', {
+    //   model: model,
+    //   prompt: prompt,
+    //   max_tokens: 100,
+    //   temperature: 0.7,
+    // }, {
+    //   headers: {
+    //     'Authorization': `Bearer ${apiKey}`,
+    //   },
+    // });
+    // console.log({
+    //   model: model,
+    //   messages: [
+    //     {
+    //       "role": "system",
+    //       "content": prompt
+    //     },{
+    //       "role": "user",
+    //       "content": args[0]
+    //     }
+    //   ]
+    // });
+    // console.log({
+    //   headers: {
+    //     'Authorization': `Bearer ${apiKey}`,
+    //   },
+    // });
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: model,
+        messages: [
+          {
+            role: 'system',
+            content: prompt,
+          },
+          {
+            role: 'user',
+            content: args[0],
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      },
+    );
+    // .then(response => console.log(response.data.choices[0].text))
+    // .catch(error => console.error(error));
+    console.log(response.data.choices);
+    console.log(response.data.choices[0].message.content);
+    const messageAResposta =
+      'Pergunta: ' +
+      args[0] +
+      ' <br> Resposta: ' +
+      response.data.choices[0].message.content;
 
-// const response = await axios.post('https://api.openai.com/v1/completions', {
-//   model: model,
-//   prompt: prompt,
-//   max_tokens: 100,
-//   temperature: 0.7,
-// }, {
-//   headers: {
-//     'Authorization': `Bearer ${apiKey}`,
-//   },
-// });
-// console.log({
-//   model: model,
-//   messages: [
-//     {
-//       "role": "system",
-//       "content": prompt
-//     },{
-//       "role": "user",
-//       "content": args[0]
-//     }
-//   ]
-// });
-// console.log({
-//   headers: {
-//     'Authorization': `Bearer ${apiKey}`,
-//   },
-// });
-const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-  model: model,
-  messages: [
-    {
-      "role": "system",
-      "content": prompt
-    },{
-      "role": "user",
-      "content": args[0]
-    }
-  ]
-}, {
-  headers: {
-    'Authorization': `Bearer ${apiKey}`,
-  },
-});
-// .then(response => console.log(response.data.choices[0].text))
-// .catch(error => console.error(error));
-console.log(response.data.choices);
-console.log(response.data.choices[0].message.content);
-const messageAResposta = 'Pergunta: '+args[0]+ ' <br> Resposta: ' +response.data.choices[0].message.content;
-
-/**
- * FIM CHAT GPT
- */
+    /**
+     * FIM CHAT GPT
+     */
 
     const messagePrisma = await this.prismaService.message.create({
       data: { content: messageAResposta, userId: payloadTokenJwt.sub },

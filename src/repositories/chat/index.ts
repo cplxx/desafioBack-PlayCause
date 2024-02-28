@@ -1,21 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/db/prisma/prisma.service';
 
 @Injectable()
 export class ChatRepository {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
-    const payloadTokenJwt = await this.jwtService.verify(args[1], {
-      secret: process.env.JWT_SECRET,
-    });
+  findAll(userId: number) {
     return this.prisma.message.findMany({
       where: {
-        userId: loggedUserId, // Adiciona esta linha para filtrar pelo userId
+        userId,
       },
       select: {
         id: true,

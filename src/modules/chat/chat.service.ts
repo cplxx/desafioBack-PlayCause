@@ -5,8 +5,8 @@ import { ChatRepository } from 'src/repositories/chat';
 @Injectable()
 export class ChatService {
   constructor(private readonly chatRepository: ChatRepository) {}
-  async findAll() {
-    return await this.chatRepository.findAll();
+  findAll(userId: number) {
+    return this.chatRepository.findAll(userId);
   }
 
   async findOne(id: number): Promise<Message> {

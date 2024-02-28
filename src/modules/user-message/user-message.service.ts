@@ -1,9 +1,9 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { CreateUserMessageDto } from './dto/create-user-message.dto';
 import { UserMessageRepository } from 'src/repositories/user-message';
-import { AuthService } from '../auth/services';
 import { ChatService } from '../chat/chat.service';
 import { JwtService } from '@nestjs/jwt';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserMessageService {
