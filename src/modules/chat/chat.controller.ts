@@ -8,7 +8,7 @@ export class ChatController {
 
   @Get()
   async findAll() {
-    return this.chatService.findAll();
+    return await this.chatService.findAll();
   }
 
 }
