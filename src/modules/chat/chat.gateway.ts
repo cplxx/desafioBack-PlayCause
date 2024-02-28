@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
 import { Server } from 'socket.io';
 import { PrismaService } from 'src/db/prisma/prisma.service';
+import { IsPublic } from '../auth/decorators';
 
 export interface Messages {
   id?: number;
@@ -33,6 +34,7 @@ export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
+  @IsPublic()
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() args: string[]) {
     const payloadTokenJwt = await this.jwtService.verify(args[1], {
@@ -58,33 +60,6 @@ export class ChatGateway {
     const prompt = process.env.IA_PROMPTY;
     const model = process.env.IA_MODEL; // Ou outro modelo de sua escolha
 
-    // const response = await axios.post('https://api.openai.com/v1/completions', {
-    //   model: model,
-    //   prompt: prompt,
-    //   max_tokens: 100,
-    //   temperature: 0.7,
-    // }, {
-    //   headers: {
-    //     'Authorization': `Bearer ${apiKey}`,
-    //   },
-    // });
-    // console.log({
-    //   model: model,
-    //   messages: [
-    //     {
-    //       "role": "system",
-    //       "content": prompt
-    //     },{
-    //       "role": "user",
-    //       "content": args[0]
-    //     }
-    //   ]
-    // });
-    // console.log({
-    //   headers: {
-    //     'Authorization': `Bearer ${apiKey}`,
-    //   },
-    // });
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {

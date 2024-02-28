@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
-import { ChatService } from './chat.service';
 import { CurrentUser } from '../auth/decorators';
 import { UserEntity } from '../auth/entites/user.entity';
+import { ChatService } from './chat.service';
 
 @Controller('chat')
 export class ChatController {
@@ -9,8 +9,6 @@ export class ChatController {
 
   @Get()
   findAll(@CurrentUser() user: UserEntity) {
-    console.log(user);
-
     return this.chatService.findAll(user.id);
   }
 }

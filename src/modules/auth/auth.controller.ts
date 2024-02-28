@@ -1,8 +1,8 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
-import { LoginDto } from './dto/login-user.dto';
-import { RegisterUsersDto } from './dto/register-user.dto';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CurrentUser, IsPublic } from './decorators';
+import { LoginDto } from './dto/login-user.dto';
+import { RegisterUsersDto } from './dto/register-user.dto';
 import { UserEntity } from './entites/user.entity';
 
 @Controller('auth')
@@ -20,7 +20,7 @@ export class AuthController {
     return this.authService.findAll();
   }
 
-  @Post('login')
+  @Post()
   @IsPublic()
   login(@Body() loginDto: LoginDto) {
     return this.authService.authenticate(loginDto);
