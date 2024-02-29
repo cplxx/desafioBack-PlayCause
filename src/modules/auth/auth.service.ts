@@ -66,4 +66,12 @@ export class AuthService {
 
     return user;
   }
+
+  async findByName(name: string) {
+    const user = await this.userRepository.findByName(name);
+
+    if (!user) throw new HttpException('User not found', 404);
+
+    return user;
+  }
 }

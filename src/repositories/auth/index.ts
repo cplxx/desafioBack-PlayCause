@@ -40,4 +40,8 @@ export class UserRepository {
   findOne(id: number): Promise<User> {
     return this.prisma.user.findFirst({ where: { id } });
   }
+
+  findByName(name: string): Promise<User> {
+    return this.prisma.user.findFirst({ where: { name } });
+  }
 }

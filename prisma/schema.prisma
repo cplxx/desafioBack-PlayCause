@@ -37,6 +37,9 @@ model Message {
   userId       Int?
   user         User?         @relation(fields: [userId], references: [id])
   userMessages UserMessage[]
+  parentId     Int?          @map("parent_id")
+  parent       Message?      @relation("ChildrenMessage", fields: [parentId], references: [id])
+  children     Message[]     @relation("ChildrenMessage")
   createdAt    DateTime      @default(now())
 
   @@map("messages")

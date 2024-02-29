@@ -10,6 +10,7 @@ import axios from 'axios';
 import { Server } from 'socket.io';
 import { PrismaService } from 'src/db/prisma/prisma.service';
 import { IsPublic } from '../auth/decorators';
+import { AuthService } from '../auth/auth.service';
 
 export interface Messages {
   id?: number;
@@ -30,6 +31,7 @@ export class ChatGateway {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly authService: AuthService,
   ) {}
   @WebSocketServer()
   server: Server;
@@ -55,10 +57,11 @@ export class ChatGateway {
     /**
      * INICIO CHAT GPT
      */
-    const apiKey = process.env.IA_API_KEY; // Substitua pelo sua chave de API real
-
+    const apiKey = process.env.IA_API_KEY;
     const prompt = process.env.IA_PROMPTY;
-    const model = process.env.IA_MODEL; // Ou outro modelo de sua escolha
+    const model = process.env.IA_MODEL;
+
+    const valetim = await this.authService.findByName('Valetim');
 
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
@@ -85,22 +88,48 @@ export class ChatGateway {
     // .catch(error => console.error(error));
     console.log(response.data.choices);
     console.log(response.data.choices[0].message.content);
-    const messageAResposta =
-      'Pergunta: ' +
-      args[0] +
-      ' <br> Resposta: ' +
-      response.data.choices[0].message.content;
+
+    // const messageAResposta = `Pergunta: ${args[0]} <br> Resposta: ${response.data.choices[0].message.content}`;
+
+    const chatgpt = await this.prismaService.message.create({
+      data: {
+        content: response.data.choices[0].message.content,
+        userId: valetim.id,
+      },
+    });
+
+    await this.prismaService.message.create({
+      data: { content: args[0], userId: user.id, parentId: chatgpt.id },
+    });
 
     /**
      * FIM CHAT GPT
      */
 
-    const messagePrisma = await this.prismaService.message.create({
-      data: { content: messageAResposta, userId: payloadTokenJwt.sub },
-    });
     // const messagePrisma = await this.prismaService.message.create({
-    //   data: { content: args[0], userId: payloadTokenJwt.sub },
+    //   data: { content: messageAResposta, userId: payloadTokenJwt.sub },
     // });
+
+    const messagePrisma = await this.prismaService.message.findMany({
+      where: { userId: payloadTokenJwt.sub },
+      include: {
+        user: true,
+        parent: {
+          include: {
+            user: {
+              select: {
+                name: true,
+                email: true,
+                createdAt: true,
+                id: true,
+                updatedAt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
     return this.server.emit('message', { ...messagePrisma, user });
   }
 }

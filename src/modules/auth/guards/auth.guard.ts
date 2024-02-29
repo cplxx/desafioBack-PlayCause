@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request.headers);
-    console.log('token', token)
+    console.log('token', token);
     if (!token)
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
 
@@ -42,6 +42,7 @@ export class AuthGuard implements CanActivate {
 
       request['user'] = user;
     } catch (e) {
+      console.log(e);
       Logger.debug('FAILED TO AUTH', e.message);
 
       throw new HttpException('Failed to auth', HttpStatus.UNAUTHORIZED);

@@ -24,6 +24,19 @@ export class ChatRepository {
             updatedAt: true,
           },
         },
+        parent: {
+          include: {
+            user: {
+              select: {
+                name: true,
+                email: true,
+                createdAt: true,
+                id: true,
+                updatedAt: true,
+              },
+            },
+          },
+        },
       },
     });
   }
